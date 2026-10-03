@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>画笑脸动画（3秒）</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fdf6e3;
+    font-family: sans-serif;
+  }
+
+  /* 所有线条的公共样式：pathLength="1" 把路径长度归一化为 1 */
+  .line {
+    fill: none;
+    stroke: #333;
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 1;   /* 一段实线 + 一段空白，各长 1 */
+    stroke-dashoffset: 1;  /* 初始偏移 1，线条完全不可见 */
+    animation: draw linear forwards;
+  }
+
+  /* 时间轴：总时长 3 秒 */
+  .face  { animation-duration: 1.4s; animation-delay: 0s; }
+  .eye-l { animation-duration: 0.4s; animation-delay: 1.4s; }
+  .eye-r { animation-duration: 0.4s; animation-delay: 1.8s; }
+  .mouth { animation-duration: 0.8s; animation-delay: 2.2s; }
+
+  /* 脸部填充色在画完轮廓后淡入 */
+  .fill {
+    fill: #ffd93b;
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out 1.0s forwards;
+  }
+
+  /* 偏移从 1 变到 0，实线逐渐“露出来”，看起来就像被画出来 */
+  @keyframes draw   { to { stroke-dashoffset: 0; } }
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  button {
+    margin-top: 24px;
+    padding: 8px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<svg id="smiley" width="300" height="300" viewBox="0 0 200 200">
+  <!-- 脸部底色 -->
+  <circle class="fill" cx="100" cy="100" r="80" />
+  <!-- 脸部轮廓：从顶部开始顺时针画 -->
+  <path class="line face" pathLength="1"
+        d="M100 20 A80 80 0 1 1 99.99 20" />
+  <!-- 左眼 -->
+  <path class="line eye-l" pathLength="1"
+        d="M75 70 L75 90" />
+  <!-- 右眼 -->
+  <path class="line eye-r" pathLength="1"
+        d="M125 70 L125 90" />
+  <!-- 嘴巴：一条向下弯的弧线 -->
+  <path class="line mouth" pathLength="1"
+        d="M60 118 Q100 160 140 118" />
+</svg>
+
+<button onclick="replay()">重新播放</button>
+
+<script>
+  // 重播：克隆替换 SVG 节点，让 CSS 动画重新开始
+  function replay() {
+    const old = document.getElementById('smiley');
+    const fresh = old.cloneNode(true);
+    old.parentNode.replaceChild(fresh, old);
+  }
+</script>
+
+</body>
+</html>
